@@ -1,4 +1,4 @@
 import os
 
-os.system('cmd /c "cd .\python-opencv-filters-master\ & streamlit run streamlit.py"')
+os.system('cmd /c "streamlit run streamlit.py"')
 
