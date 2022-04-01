@@ -13,7 +13,7 @@ pip install -r requirements.txt
 
 *Caso o arquivo Iniciar.py de erro será necessario executar manualmente os códigos.<br>
 *Primeiro vá com o terminal até o diretorio do projeto.<br>
-*Então:<br>
+*Então no terminal:<br>
 ```
 streamlit run streamlit.py
 ```
