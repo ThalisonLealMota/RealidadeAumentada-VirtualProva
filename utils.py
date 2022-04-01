@@ -62,16 +62,54 @@ def overlaw_color_in_image(img, color):
     return img
 
 def put_sticker_on_head(img, stickers):
-    if stickers[0]:
-        sticker = cv2.imread('./Imagens/oculos.png')
-        original_sticker_h, original_sticker_w, sticker_channels = sticker.shape
-        sticker_gray = cv2.cvtColor(sticker, cv2.COLOR_BGR2GRAY)
-        ret, original_mask = cv2.threshold(sticker_gray, 10, 255, cv2.THRESH_BINARY_INV)
-        original_mask_inv = cv2.bitwise_not(original_mask)
-        img_h, img_w = img.shape[:2]
-        gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-        faces = face_cascade.detectMultiScale(gray, 1.3, 5)
-        for (x, y, w, h) in faces:
+
+    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    faces = face_cascade.detectMultiScale(gray, 1.3, 5)
+    for (x, y, w, h) in faces:
+        if stickers[1]:
+            hat = cv2.imread('./Imagens/chapeu.png')
+            original_hat_h, original_hat_w, hat_channels = hat.shape
+            hat_gray = cv2.cvtColor(hat, cv2.COLOR_BGR2GRAY)
+            ret, original_mask = cv2.threshold(hat_gray, 10, 255, cv2.THRESH_BINARY_INV)
+            original_mask_inv = cv2.bitwise_not(original_mask)
+            img_h, img_w = img.shape[:2]
+            face_w = w
+            face_h = h
+            face_x1 = x
+            face_x2 = face_x1 + face_w
+            face_y1 = y
+            face_y2 = face_y1 + face_h
+            hat_width = int(1.5 * face_w)
+            hat_height = int(hat_width * original_hat_h / original_hat_w)
+            hat_x1 = face_x2 - int(face_w/2) - int(hat_width/2)
+            hat_x2 = hat_x1 + hat_width
+            hat_y1 = face_y1 - int(face_h)
+            hat_y2 = hat_y1 + hat_height
+            if hat_x1 < 0:
+                hat_x1 = 0
+            if hat_y1 < 0:
+                hat_y1 = 0
+            if hat_x2 > img_w:
+                hat_x2 = img_w
+            if hat_y2 > img_h:
+                hat_y2 = img_h
+            hat_width = hat_x2 - hat_x1
+            hat_height = hat_y2 - hat_y1
+            hat = cv2.resize(hat, (hat_width, hat_height), interpolation=cv2.INTER_AREA)
+            mask = cv2.resize(original_mask, (hat_width, hat_height), interpolation=cv2.INTER_AREA)
+            mask_inv = cv2.resize(original_mask_inv, (hat_width, hat_height), interpolation=cv2.INTER_AREA)
+            roi = img[hat_y1:hat_y2, hat_x1:hat_x2]
+            roi_bg = cv2.bitwise_and(roi, roi, mask=mask)
+            roi_fg = cv2.bitwise_and(hat, hat, mask=mask_inv)
+            dst = cv2.add(roi_bg, roi_fg)
+            img[hat_y1:hat_y2, hat_x1:hat_x2] = dst
+        if stickers[0]:
+            sticker = cv2.imread('./Imagens/oculos.png')
+            original_sticker_h, original_sticker_w, sticker_channels = sticker.shape
+            sticker_gray = cv2.cvtColor(sticker, cv2.COLOR_BGR2GRAY)
+            ret, original_mask = cv2.threshold(sticker_gray, 10, 255, cv2.THRESH_BINARY_INV)
+            original_mask_inv = cv2.bitwise_not(original_mask)
+            img_h, img_w = img.shape[:2]
             face_w = w
             face_h = h
             face_x1 = x
@@ -82,7 +120,7 @@ def put_sticker_on_head(img, stickers):
             sticker_height = int(sticker_width * original_sticker_h / original_sticker_w)
             sticker_x1 = face_x2 - int(face_w/2) - int(sticker_width/2)
             sticker_x2 = sticker_x1 + sticker_width
-            sticker_y1 = face_y1 - int(face_h*0.05)
+            sticker_y1 = face_y1 + int(face_h/7)
             sticker_y2 = sticker_y1 + sticker_height
             if sticker_x1 < 0:
                 sticker_x1 = 0
@@ -102,46 +140,44 @@ def put_sticker_on_head(img, stickers):
             roi_fg = cv2.bitwise_and(sticker, sticker, mask=mask_inv)
             dst = cv2.add(roi_bg, roi_fg)
             img[sticker_y1:sticker_y2, sticker_x1:sticker_x2] = dst
-    if stickers[1]:
-        witch = cv2.imread('./Imagens/witch.png')
-        original_witch_h, original_witch_w, witch_channels = witch.shape
-        witch_gray = cv2.cvtColor(witch, cv2.COLOR_BGR2GRAY)
-        ret, original_mask = cv2.threshold(witch_gray, 10, 255, cv2.THRESH_BINARY_INV)
-        original_mask_inv = cv2.bitwise_not(original_mask)
-        img_h, img_w = img.shape[:2]
-        gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-        faces = face_cascade.detectMultiScale(gray, 1.3, 5)
-        for (x, y, w, h) in faces:
+        if stickers[2]:
+            bigode = cv2.imread('./Imagens/bigode.png')
+            original_bigode_h, original_bigode_w, bigode_channels = bigode.shape
+            bigode_gray = cv2.cvtColor(bigode, cv2.COLOR_BGR2GRAY)
+            ret, original_mask = cv2.threshold(bigode_gray, 10, 255, cv2.THRESH_BINARY_INV)
+            original_mask_inv = cv2.bitwise_not(original_mask)
+            img_h, img_w = img.shape[:2]
             face_w = w
             face_h = h
             face_x1 = x
             face_x2 = face_x1 + face_w
             face_y1 = y
             face_y2 = face_y1 + face_h
-            witch_width = int(1.5 * face_w)
-            witch_height = int(witch_width * original_witch_h / original_witch_w)
-            witch_x1 = face_x2 - int(face_w/2) - int(witch_width/2)
-            witch_x2 = witch_x1 + witch_width
-            witch_y1 = face_y1 - int(face_h*1.25)
-            witch_y2 = witch_y1 + witch_height
-            if witch_x1 < 0:
-                witch_x1 = 0
-            if witch_y1 < 0:
-                witch_y1 = 0
-            if witch_x2 > img_w:
-                witch_x2 = img_w
-            if witch_y2 > img_h:
-                witch_y2 = img_h
-            witch_width = witch_x2 - witch_x1
-            witch_height = witch_y2 - witch_y1
-            witch = cv2.resize(witch, (witch_width, witch_height), interpolation=cv2.INTER_AREA)
-            mask = cv2.resize(original_mask, (witch_width, witch_height), interpolation=cv2.INTER_AREA)
-            mask_inv = cv2.resize(original_mask_inv, (witch_width, witch_height), interpolation=cv2.INTER_AREA)
-            roi = img[witch_y1:witch_y2, witch_x1:witch_x2]
+            bigode_width = int(face_w)
+            bigode_height = int(bigode_width * original_bigode_h / original_bigode_w)
+            bigode_x1 = face_x2 - int(face_w/2) - int(bigode_width/2)
+            bigode_x2 = bigode_x1 + bigode_width
+            bigode_y1 = face_y1 + int(face_h/3)
+            bigode_y2 = bigode_y1 + bigode_height
+            if bigode_x1 < 0:
+                bigode_x1 = 0
+            if bigode_y1 < 0:
+                bigode_y1 = 0
+            if bigode_x2 > img_w:
+                bigode_x2 = img_w
+            if bigode_y2 > img_h:
+                bigode_y2 = img_h
+            bigode_width = bigode_x2 - bigode_x1
+            bigode_height = bigode_y2 - bigode_y1
+            bigode = cv2.resize(bigode, (bigode_width, bigode_height), interpolation=cv2.INTER_AREA)
+            mask = cv2.resize(original_mask, (bigode_width, bigode_height), interpolation=cv2.INTER_AREA)
+            mask_inv = cv2.resize(original_mask_inv, (bigode_width, bigode_height), interpolation=cv2.INTER_AREA)
+            roi = img[bigode_y1:bigode_y2, bigode_x1:bigode_x2]
             roi_bg = cv2.bitwise_and(roi, roi, mask=mask)
-            roi_fg = cv2.bitwise_and(witch, witch, mask=mask_inv)
+            roi_fg = cv2.bitwise_and(bigode, bigode, mask=mask_inv)
             dst = cv2.add(roi_bg, roi_fg)
-            img[witch_y1:witch_y2, witch_x1:witch_x2] = dst
+            img[bigode_y1:bigode_y2, bigode_x1:bigode_x2] = dst
+    
     return img
 
 def process_types(img, type_selectbox, color_selectbox, stickers):
@@ -185,6 +221,7 @@ def process_image(col_right):
         with col_right:
             oculos = st.checkbox('Oculos')
             chapeu = st.checkbox('Chapeu')
+            bigode = st.checkbox('Bigode')
 
     if uploaded_file:
         img = decode(uploaded_file)
@@ -194,7 +231,7 @@ def process_image(col_right):
                 with col_right:
                     st.write('Nenhum rosto encontrado.')
     
-        result_image = process_types(img, type_selectbox, color_selectbox, [oculos, chapeu])
+        result_image = process_types(img, type_selectbox, color_selectbox, [oculos, chapeu, bigode])
         imageRGB = cv2.cvtColor(result_image, cv2.COLOR_BGR2RGB)
         set_image(img_placeholder, imageRGB)
 
@@ -224,12 +261,13 @@ def process_video(col_right):
         with col_right:
             oculos = st.checkbox('Oculos')
             chapeu = st.checkbox('Chapeu')
+            bigode = st.checkbox('Bigode')
             
     if process:
         cap = cv2.VideoCapture(0)
         while True:
             ret, img = cap.read()
-            result_image = process_types(img, type_selectbox, color_selectbox, [oculos, chapeu])
+            result_image = process_types(img, type_selectbox, color_selectbox, [oculos, chapeu, bigode])
             cv2.imshow('img', result_image)
             if cv2.waitKey(1) == ord('q'):
                 break
