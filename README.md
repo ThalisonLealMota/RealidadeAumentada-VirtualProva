@@ -14,8 +14,8 @@ pip install -r requirements.txt
 *Caso o arquivo Iniciar.py de erro será necessario executar manualmente os códigos.<br>
 *Primeiro vá com o terminal até o diretorio do projeto.<br>
 *Então:<br>
-'''
+```
 streamlit run streamlit.py
-'''
+```
 
 * Access http://127.0.0.1:8000/ or http://localhost:8000/
