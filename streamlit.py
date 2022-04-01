@@ -6,8 +6,6 @@ from utils import (
     process_image,
 )
 
-face_cascade = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
-
 st.set_page_config(
     page_title="Filtro para vídeo",
     page_icon="🚀",
@@ -26,7 +24,6 @@ mode_selectbox = st.selectbox(
     ("Imagem", "Vídeo")
 )
 build_sidebar()
-
 
 col_left, col_right = st.columns(2)
 with col_left:

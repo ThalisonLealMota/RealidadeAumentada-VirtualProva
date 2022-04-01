@@ -3,8 +3,6 @@ import numpy as np
 import cv2
 
 face_cascade = cv2.CascadeClassifier('haarcascade/haarcascade_frontalface_default.xml')
-eye_cascade = cv2.CascadeClassifier('haarcascade/haarcascade_eye.xml')
-
 
 def build_sidebar():
     st.sidebar.write("## Prova Realidade Virtual e Aumentada")
@@ -62,47 +60,10 @@ def overlaw_color_in_image(img, color):
     return img
 
 def put_sticker_on_head(img, stickers):
-
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     faces = face_cascade.detectMultiScale(gray, 1.3, 5)
     for (x, y, w, h) in faces:
-        if stickers[1]:
-            hat = cv2.imread('./Imagens/chapeu.png')
-            original_hat_h, original_hat_w, hat_channels = hat.shape
-            hat_gray = cv2.cvtColor(hat, cv2.COLOR_BGR2GRAY)
-            ret, original_mask = cv2.threshold(hat_gray, 10, 255, cv2.THRESH_BINARY_INV)
-            original_mask_inv = cv2.bitwise_not(original_mask)
-            img_h, img_w = img.shape[:2]
-            face_w = w
-            face_h = h
-            face_x1 = x
-            face_x2 = face_x1 + face_w
-            face_y1 = y
-            face_y2 = face_y1 + face_h
-            hat_width = int(1.5 * face_w)
-            hat_height = int(hat_width * original_hat_h / original_hat_w)
-            hat_x1 = face_x2 - int(face_w/2) - int(hat_width/2)
-            hat_x2 = hat_x1 + hat_width
-            hat_y1 = face_y1 - int(face_h)
-            hat_y2 = hat_y1 + hat_height
-            if hat_x1 < 0:
-                hat_x1 = 0
-            if hat_y1 < 0:
-                hat_y1 = 0
-            if hat_x2 > img_w:
-                hat_x2 = img_w
-            if hat_y2 > img_h:
-                hat_y2 = img_h
-            hat_width = hat_x2 - hat_x1
-            hat_height = hat_y2 - hat_y1
-            hat = cv2.resize(hat, (hat_width, hat_height), interpolation=cv2.INTER_AREA)
-            mask = cv2.resize(original_mask, (hat_width, hat_height), interpolation=cv2.INTER_AREA)
-            mask_inv = cv2.resize(original_mask_inv, (hat_width, hat_height), interpolation=cv2.INTER_AREA)
-            roi = img[hat_y1:hat_y2, hat_x1:hat_x2]
-            roi_bg = cv2.bitwise_and(roi, roi, mask=mask)
-            roi_fg = cv2.bitwise_and(hat, hat, mask=mask_inv)
-            dst = cv2.add(roi_bg, roi_fg)
-            img[hat_y1:hat_y2, hat_x1:hat_x2] = dst
+        
         if stickers[0]:
             sticker = cv2.imread('./Imagens/oculos.png')
             original_sticker_h, original_sticker_w, sticker_channels = sticker.shape
@@ -140,6 +101,45 @@ def put_sticker_on_head(img, stickers):
             roi_fg = cv2.bitwise_and(sticker, sticker, mask=mask_inv)
             dst = cv2.add(roi_bg, roi_fg)
             img[sticker_y1:sticker_y2, sticker_x1:sticker_x2] = dst
+
+        if stickers[1]:
+            hat = cv2.imread('./Imagens/chapeu.png')
+            original_hat_h, original_hat_w, hat_channels = hat.shape
+            hat_gray = cv2.cvtColor(hat, cv2.COLOR_BGR2GRAY)
+            ret, original_mask = cv2.threshold(hat_gray, 10, 255, cv2.THRESH_BINARY_INV)
+            original_mask_inv = cv2.bitwise_not(original_mask)
+            img_h, img_w = img.shape[:2]
+            face_w = w
+            face_h = h
+            face_x1 = x
+            face_x2 = face_x1 + face_w
+            face_y1 = y
+            face_y2 = face_y1 + face_h
+            hat_width = int(1.5 * face_w)
+            hat_height = int(hat_width * original_hat_h / original_hat_w)
+            hat_x1 = face_x2 - int(face_w/2) - int(hat_width/2)
+            hat_x2 = hat_x1 + hat_width
+            hat_y1 = face_y1 - int(face_h)
+            hat_y2 = hat_y1 + hat_height
+            if hat_x1 < 0:
+                hat_x1 = 0
+            if hat_y1 < 0:
+                hat_y1 = 0
+            if hat_x2 > img_w:
+                hat_x2 = img_w
+            if hat_y2 > img_h:
+                hat_y2 = img_h
+            hat_width = hat_x2 - hat_x1
+            hat_height = hat_y2 - hat_y1
+            hat = cv2.resize(hat, (hat_width, hat_height), interpolation=cv2.INTER_AREA)
+            mask = cv2.resize(original_mask, (hat_width, hat_height), interpolation=cv2.INTER_AREA)
+            mask_inv = cv2.resize(original_mask_inv, (hat_width, hat_height), interpolation=cv2.INTER_AREA)
+            roi = img[hat_y1:hat_y2, hat_x1:hat_x2]
+            roi_bg = cv2.bitwise_and(roi, roi, mask=mask)
+            roi_fg = cv2.bitwise_and(hat, hat, mask=mask_inv)
+            dst = cv2.add(roi_bg, roi_fg)
+            img[hat_y1:hat_y2, hat_x1:hat_x2] = dst
+             
         if stickers[2]:
             bigode = cv2.imread('./Imagens/bigode.png')
             original_bigode_h, original_bigode_w, bigode_channels = bigode.shape
@@ -199,7 +199,6 @@ def process_types(img, type_selectbox, color_selectbox, stickers):
         result_image = put_sticker_on_head(img, stickers)
     return result_image
 
-
 def process_image(col_right):
     oculos = 0
     chapeu = 0
@@ -222,8 +221,9 @@ def process_image(col_right):
 
     if type_selectbox == "Colocar adesivo":
         with col_right:
-            oculos = st.checkbox('Oculos')
-            chapeu = st.checkbox('Chapeu')
+            st.markdown('#### Selecione o que adicionar na imagem')
+            oculos = st.checkbox('Óculos')
+            chapeu = st.checkbox('Chapéu')
             bigode = st.checkbox('Bigode')
 
     if uploaded_file:
@@ -237,7 +237,6 @@ def process_image(col_right):
         result_image = process_types(img, type_selectbox, color_selectbox, [oculos, chapeu, bigode])
         imageRGB = cv2.cvtColor(result_image, cv2.COLOR_BGR2RGB)
         set_image(img_placeholder, imageRGB)
-
 
 def process_video(col_right):
     oculos = 0
@@ -261,12 +260,12 @@ def process_video(col_right):
             ### Uma janela irá abrir no seu computador com o vídeo rodando.
             """
         )
-    
 
     if type_selectbox == "Colocar adesivo":
         with col_right:
-            oculos = st.checkbox('Oculos')
-            chapeu = st.checkbox('Chapeu')
+            st.markdown('#### Selecione o que adicionar no video')
+            oculos = st.checkbox('Óculos')
+            chapeu = st.checkbox('Chapéu')
             bigode = st.checkbox('Bigode')
             
     if process:
