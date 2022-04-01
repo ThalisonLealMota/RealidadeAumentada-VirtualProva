@@ -11,7 +11,7 @@ pip install -r requirements.txt
  ```
 *Execute o arquivo Iniciar.py
 
-*Caso o arquivo Iniciar.py de erro será necessario executar manualmente os códigos.
+*Caso o arquivo Iniciar.py de erro será necessario executar manualmente os códigos.<br>
 *Primeiro vá com o terminal até o diretorio do projeto.
 *Então:<br>
 '''
