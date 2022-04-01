@@ -201,6 +201,9 @@ def process_types(img, type_selectbox, color_selectbox, stickers):
 
 
 def process_image(col_right):
+    oculos = 0
+    chapeu = 0
+    bigode = 0
     uploaded_file = st.file_uploader("Escolha uma imagem", type=['jpg', 'png'])
     type_selectbox = st.selectbox(
         "Escolha o tipo de processamento",
@@ -237,6 +240,9 @@ def process_image(col_right):
 
 
 def process_video(col_right):
+    oculos = 0
+    chapeu = 0
+    bigode = 0
     type_selectbox = st.selectbox(
         "Escolha o tipo de processamento",
         ("Indentificar rosto", "Alteração de cores", "Colocar adesivo")
